@@ -36,14 +36,14 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen pt-[5px]">
         <h1 className="text-sm text-white">Loading...</h1>
       </div>
     );
   }
 
   return (
-    <div className="relative bg-black h-[80px] w-[2164px] overflow-hidden text-lg">
+    <div className="relative bg-black h-[80px] w-[2164px] overflow-hidden text-lg mt-[10px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div key={index} className="mx-8 flex items-center space-x-4">
