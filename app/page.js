@@ -43,7 +43,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[40px] w-[2164px] overflow-hidden text-sm">
+    <div className="relative bg-black h-[80px] w-[2164px] overflow-hidden text-lg">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div key={index} className="mx-8 flex items-center space-x-4">
