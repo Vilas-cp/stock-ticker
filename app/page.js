@@ -10,28 +10,40 @@ export default function Home() {
   useEffect(() => {
     // Hardcoded stock data
     const stockData = [
-      { symbol: "AAPL", percentChange: 1.2, price: 150, absoluteChange: 1.8 },
-      { symbol: "GOOG", percentChange: -0.8, price: 2800, absoluteChange: -22.4 },
-      { symbol: "AMZN", percentChange: 0.5, price: 3400, absoluteChange: 17.0 },
-      { symbol: "MSFT", percentChange: -1.0, price: 299, absoluteChange: -3.0 },
-      { symbol: "TSLA", percentChange: 2.1, price: 900, absoluteChange: 18.9 },
-      { symbol: "META", percentChange: -0.4, price: 375, absoluteChange: -1.5 },
-      { symbol: "NFLX", percentChange: 3.0, price: 650, absoluteChange: 19.5 },
-      { symbol: "NVDA", percentChange: -2.5, price: 800, absoluteChange: -20.0 },
-      { symbol: "INTC", percentChange: 1.7, price: 55, absoluteChange: 0.93 },
-      { symbol: "AMD", percentChange: -0.3, price: 110, absoluteChange: -0.33 },
-      { symbol: "IBM", percentChange: 1.1, price: 125, absoluteChange: 1.38 },
-      { symbol: "ORCL", percentChange: -1.8, price: 95, absoluteChange: -1.71 },
-      { symbol: "SAP", percentChange: 0.9, price: 130, absoluteChange: 1.17 },
-      { symbol: "UBER", percentChange: 2.3, price: 45, absoluteChange: 1.04 },
-      { symbol: "LYFT", percentChange: -0.6, price: 30, absoluteChange: -0.18 },
+      { symbol: "AAPL", price: 175, percentChange: 1, absoluteChange: 2 },
+      { symbol: "GOOGL", price: 2830, percentChange: -1, absoluteChange: -21 },
+      { symbol: "AMZN", price: 3475, percentChange: 2, absoluteChange: 78 },
+      { symbol: "MSFT", price: 299, percentChange: 1, absoluteChange: 1 },
+      { symbol: "TSLA", price: 740, percentChange: -1, absoluteChange: -10 },
+      { symbol: "META", price: 365, percentChange: 1, absoluteChange: 3 },
+      { symbol: "NFLX", price: 525, percentChange: -1, absoluteChange: -2 },
+      { symbol: "NVDA", price: 220, percentChange: 2, absoluteChange: 4 },
+      { symbol: "ADBE", price: 655, percentChange: -1, absoluteChange: -8 },
+      { symbol: "ORCL", price: 93, percentChange: 1, absoluteChange: 1 },
+      { symbol: "IBM", price: 125, percentChange: 0, absoluteChange: 0 },
+      { symbol: "INTC", price: 54, percentChange: -2, absoluteChange: -1 },
+      { symbol: "AMD", price: 110, percentChange: 1, absoluteChange: 1 },
+      { symbol: "SAP", price: 130, percentChange: -1, absoluteChange: -1 },
+      { symbol: "TWTR", price: 64, percentChange: 3, absoluteChange: 2 },
     ];
+    
 
-    // Simulate API delay
     setTimeout(() => {
       setStocks(stockData);
       setLoading(false);
-    }, 1000);
+    }, 1000); // Simulating 1-second delay
+
+    const interval = setInterval(() => {
+      setStocks((prevStocks) =>
+        prevStocks.map((stock) => ({
+          ...stock,
+          price: stock.price + 1,
+          absoluteChange: stock.absoluteChange + 1,
+        }))
+      );
+    }, 2000); // Update every 2 seconds
+
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -43,7 +55,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[80px] w-[2164px] overflow-hidden text-lg mt-[10px]">
+    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-lg ">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div key={index} className="mx-8 flex items-center space-x-4">
@@ -64,7 +76,11 @@ export default function Home() {
               }`}
             >
               <span>
-                {stock.percentChange > 0 ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                {stock.percentChange > 0 ? (
+                  <ArrowDropUpIcon />
+                ) : (
+                  <ArrowDropDownIcon />
+                )}
                 {stock.price !== null ? `$${stock.price}` : "Price Unavailable"}
               </span>
               <span>
@@ -77,7 +93,10 @@ export default function Home() {
 
         {/* Duplicate for scrolling effect */}
         {stocks.map((stock, index) => (
-          <div key={index + stocks.length} className="mx-8 flex items-center space-x-4">
+          <div
+            key={index + stocks.length}
+            className="mx-8 flex items-center space-x-4"
+          >
             <div
               className={`flex flex-col font-bold ${
                 stock.percentChange > 0 ? "text-green-600" : "text-red-600"
@@ -95,7 +114,11 @@ export default function Home() {
               }`}
             >
               <span>
-                {stock.percentChange > 0 ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                {stock.percentChange > 0 ? (
+                  <ArrowDropUpIcon />
+                ) : (
+                  <ArrowDropDownIcon />
+                )}
                 {stock.price !== null ? `$${stock.price}` : "Price Unavailable"}
               </span>
               <span>
