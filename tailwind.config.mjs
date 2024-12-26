@@ -11,6 +11,15 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      animation: {
+        marquee: "marquee 15s linear infinite", // Add custom animation
+      },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(100%)" },   // Start off-screen
+          "100%": { transform: "translateX(-100%)" }, // End off-screen
+        },
+      },
     },
   },
   plugins: [],
