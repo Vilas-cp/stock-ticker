@@ -40,7 +40,14 @@ export default function Home() {
       }
     };
 
+   
     fetchStockData();
+
+    
+    const intervalId = setInterval(fetchStockData, 240000);
+
+   
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
@@ -91,8 +98,7 @@ export default function Home() {
               </span>
             </div>
           </div>
-        ))}
-         {stocks.map((stock, index) => (
+        ))}   {stocks.map((stock, index) => (
           <div key={index} className="mx-8 flex items-center space-x-4">
             <div
               className={`flex flex-col ${
@@ -130,6 +136,7 @@ export default function Home() {
             </div>
           </div>
         ))}
+
       </div>
     </div>
   );
