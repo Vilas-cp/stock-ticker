@@ -62,7 +62,7 @@ export default function Home() {
     <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[30px] mt-[-5px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
-          <div key={index} className="mx-8 flex items-center space-x-4">
+          <div key={index} className="mx-5 flex items-center space-x-4">
             <div
               className={`flex flex-col ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
           </div>
         ))}   {stocks.map((stock, index) => (
-          <div key={index} className="mx-8 flex items-center space-x-4">
+          <div key={index} className="mx-5 flex items-center space-x-4">
             <div
               className={`flex flex-col ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
