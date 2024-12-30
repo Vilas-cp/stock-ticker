@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 export default function Home() {
-  const stockData = [
+  const initialStockData = [
     {
       symbol: "AAPL",
       curPrice: 255.65,
@@ -58,19 +58,27 @@ export default function Home() {
       currency: "₹",
       diff: "-9.55",
       direction: "up",
-    }
+    },
   ];
 
-  const [stocks] = useState(
-    stockData.map((stock) => ({
-      symbol: stock.symbol,
-      price: stock.curPrice,
-      percentChange: stock.percent,
-      absoluteChange: stock.diff,
-      currency: stock.currency,
-      direction: stock.direction,
-    }))
-  );
+  const [stocks, setStocks] = useState(initialStockData);
+
+  // Simulate fetching new stock data every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate updated stock data (replace this with an actual API call)
+      const updatedStockData = initialStockData.map((stock) => ({
+        ...stock,
+        curPrice: (stock.curPrice * (1 + (Math.random() - 0.5) * 0.02)).toFixed(2),
+        diff: ((stock.curPrice - stock.prePrice) * (Math.random() - 0.5)).toFixed(2),
+        percent: `${((Math.random() - 0.5) * 2).toFixed(2)}%`,
+        direction: Math.random() > 0.5 ? "up" : "down",
+      }));
+      setStocks(updatedStockData);
+    }, 120000); 
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[34px] mt-[-5px]">
@@ -80,36 +88,29 @@ export default function Home() {
             key={index}
             className="flex justify-between items-center space-x-8 w-full max-w-[300px] mx-7"
           >
-         
             <div
               className={`flex flex-col items-center ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
               }`}
             >
               <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percentChange}</span>
+              <span className="font-bold">{stock.percent}</span>
             </div>
-
-            
             <div
               className={`flex flex-col items-center ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
               }`}
             >
               <span className="flex items-center">
-                {stock.direction === "up" ? (
-                  <ArrowDropUpIcon />
-                ) : (
-                  <ArrowDropDownIcon />
-                )}
-                {stock.price !== null
-                  ? `${stock.currency}${stock.price}`
+                {stock.direction === "up" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                {stock.curPrice !== null
+                  ? `${stock.currency}${stock.curPrice}`
                   : "Price Unavailable"}
               </span>
               <span className="font-bold">
-                {stock.absoluteChange > 0 ? "+" : ""}
+                {stock.diff > 0 ? "+" : ""}
                 {stock.currency}
-                {stock.absoluteChange}
+                {stock.diff}
               </span>
             </div>
           </div>
@@ -119,36 +120,29 @@ export default function Home() {
             key={index}
             className="flex justify-between items-center space-x-8 w-full max-w-[300px] mx-7"
           >
-            {/* Symbol and Percent Change */}
             <div
               className={`flex flex-col items-center ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
               }`}
             >
               <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percentChange}</span>
+              <span className="font-bold">{stock.percent}</span>
             </div>
-
-            {/* Price and Absolute Change */}
             <div
               className={`flex flex-col items-center ${
                 stock.direction === "up" ? "text-green-600" : "text-red-600"
               }`}
             >
               <span className="flex items-center">
-                {stock.direction === "up" ? (
-                  <ArrowDropUpIcon />
-                ) : (
-                  <ArrowDropDownIcon />
-                )}
-                {stock.price !== null
-                  ? `${stock.currency}${stock.price}`
+                {stock.direction === "up" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                {stock.curPrice !== null
+                  ? `${stock.currency}${stock.curPrice}`
                   : "Price Unavailable"}
               </span>
               <span className="font-bold">
-                {stock.absoluteChange > 0 ? "+" : ""}
+                {stock.diff > 0 ? "+" : ""}
                 {stock.currency}
-                {stock.absoluteChange}
+                {stock.diff}
               </span>
             </div>
           </div>
