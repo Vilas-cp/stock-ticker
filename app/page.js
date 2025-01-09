@@ -8,42 +8,56 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const response = await fetch("https://stock.manojad.dev/stock-prices");
+        const requestBodies = [
+          { market: "ind", group: 1 },
+          { market: "ind", group: 2 },
+          { market: "us", group: 1 },
+          { market: "us", group: 2 },
+        ];
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        
+        const responses = await Promise.all(
+          requestBodies.map((body) =>
+            fetch("https://v3f43y5hpc.execute-api.ap-south-1.amazonaws.com/default/stock-api", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            })
+          )
+        );
 
-        const data = await response.json();
-        console.log("Parsed Data:", data);
+      
+        const data = await Promise.all(responses.map((res) => res.json()));
 
-        const formattedData = data.stocks
-          ? data.stocks.filter(
-              (stock) =>
-                stock &&
-                stock.symbol &&
-                stock.curPrice !== null &&
-                stock.currency &&
-                stock.percent !== null &&
-                stock.direction
-            )
-          : [];
-
-        console.log("Filtered Data:", formattedData);
+   
+        const combinedStocks = data.flatMap((item) =>
+          item.filter(
+            (stock) =>
+              stock &&
+              stock.symbol &&
+              stock.curPrice !== null &&
+              stock.currency &&
+              stock.percent !== null &&
+              stock.direction
+          )
+        );
 
        
-        localStorage.setItem("stocks", JSON.stringify(formattedData));
+        localStorage.setItem("stocks", JSON.stringify(combinedStocks));
 
-        setStocks(formattedData);
+        setStocks(combinedStocks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching stock data:", error);
         setError(error.message);
 
-     
+   
         const localData = localStorage.getItem("stocks");
         if (localData) {
           setStocks(JSON.parse(localData));
@@ -53,21 +67,21 @@ export default function Home() {
       }
     };
 
-
+  
     const initialData = localStorage.getItem("stocks");
     if (initialData) {
       setStocks(JSON.parse(initialData));
       setLoading(false);
     }
 
-   
+    
     fetchStockData();
 
-    
     const intervalId = setInterval(fetchStockData, 240000);
 
     return () => clearInterval(intervalId);
   }, []);
+
 
   if (loading) {
     return (
