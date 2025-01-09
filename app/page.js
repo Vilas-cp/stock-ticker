@@ -31,19 +31,39 @@ export default function Home() {
                 stock.direction
             )
           : [];
+
         console.log("Filtered Data:", formattedData);
+
+       
+        localStorage.setItem("stocks", JSON.stringify(formattedData));
 
         setStocks(formattedData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching stock data:", error);
         setError(error.message);
+
+     
+        const localData = localStorage.getItem("stocks");
+        if (localData) {
+          setStocks(JSON.parse(localData));
+        }
+
         setLoading(false);
       }
     };
 
+
+    const initialData = localStorage.getItem("stocks");
+    if (initialData) {
+      setStocks(JSON.parse(initialData));
+      setLoading(false);
+    }
+
+   
     fetchStockData();
 
+    
     const intervalId = setInterval(fetchStockData, 240000);
 
     return () => clearInterval(intervalId);
@@ -57,7 +77,7 @@ export default function Home() {
     );
   }
 
-  if (error) {
+  if (error && stocks.length === 0) {
     return (
       <div className="flex justify-center items-center h-screen">
         <h1 className="text-sm text-red-600">Error: {error}</h1>
@@ -66,7 +86,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[26px] mt-[-5px]">
+    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[25px] mt-[-5px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div
@@ -103,7 +123,8 @@ export default function Home() {
               </span>
             </div>
           </div>
-        ))}{stocks.map((stock, index) => (
+        ))}
+        {stocks.map((stock, index) => (
           <div
             key={index}
             className="flex justify-between items-center w-full max-w-[300px] mx-7"
