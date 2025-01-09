@@ -20,14 +20,18 @@ export default function Home() {
         const data = await response.json();
         console.log("Parsed Data:", data);
 
-        const formattedData = data.stocks.map((stock) => ({
-          symbol: stock.symbol,
-          price: stock.curPrice,
-          percentChange: stock.percent,
-          absoluteChange: stock.diff,
-          currency: stock.currency,
-          direction: stock.direction,
-        }));
+        const formattedData = data.stocks
+          ? data.stocks.filter(
+              (stock) =>
+                stock &&
+                stock.symbol &&
+                stock.curPrice !== null &&
+                stock.currency &&
+                stock.percent !== null &&
+                stock.direction
+            )
+          : [];
+        console.log("Filtered Data:", formattedData);
 
         setStocks(formattedData);
         setLoading(false);
@@ -53,8 +57,16 @@ export default function Home() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <h1 className="text-sm text-red-600">Error: {error}</h1>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[25px] mt-[-5px]">
+    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[27px] mt-[-5px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div
@@ -67,7 +79,7 @@ export default function Home() {
               }`}
             >
               <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percentChange}</span>
+              <span className="font-bold">{stock.percent}</span>
             </div>
             <div
               className={`flex flex-col items-center ${
@@ -80,19 +92,18 @@ export default function Home() {
                 ) : (
                   <ArrowDropDownIcon />
                 )}
-                {stock.price !== null
-                  ? `${stock.currency}${stock.price}`
+                {stock.curPrice !== null
+                  ? `${stock.currency}${stock.curPrice}`
                   : "Price Unavailable"}
               </span>
               <span className="font-bold">
-                {stock.absoluteChange > 0 ? "+" : ""}
+                {stock.diff > 0 ? "+" : ""}
                 {stock.currency}
-                {stock.absoluteChange}
+                {stock.diff}
               </span>
             </div>
           </div>
-        ))}
-        {stocks.map((stock, index) => (
+        ))}{stocks.map((stock, index) => (
           <div
             key={index}
             className="flex justify-between items-center w-full max-w-[300px] mx-7"
@@ -103,7 +114,7 @@ export default function Home() {
               }`}
             >
               <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percentChange}</span>
+              <span className="font-bold">{stock.percent}</span>
             </div>
             <div
               className={`flex flex-col items-center ${
@@ -116,14 +127,14 @@ export default function Home() {
                 ) : (
                   <ArrowDropDownIcon />
                 )}
-                {stock.price !== null
-                  ? `${stock.currency}${stock.price}`
+                {stock.curPrice !== null
+                  ? `${stock.currency}${stock.curPrice}`
                   : "Price Unavailable"}
               </span>
               <span className="font-bold">
-                {stock.absoluteChange > 0 ? "+" : ""}
+                {stock.diff > 0 ? "+" : ""}
                 {stock.currency}
-                {stock.absoluteChange}
+                {stock.diff}
               </span>
             </div>
           </div>
