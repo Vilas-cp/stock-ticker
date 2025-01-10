@@ -91,7 +91,7 @@ export default function Home() {
           >
             <div className="flex items-center flex-col -space-y-[8px]">
               <div>{stock.symbol}</div>
-              <div>{stock.percent}%</div>
+              <div>{stock.percent}</div>
             </div>
             <div className="flex items-center flex-col -space-y-[8px] justify-center">
               <div>
@@ -120,7 +120,7 @@ export default function Home() {
           >
             <div className="flex items-center flex-col -space-y-[8px]">
               <div>{stock.symbol}</div>
-              <div>{stock.percent}%</div>
+              <div>{stock.percent}</div>
             </div>
             <div className="flex items-center flex-col -space-y-[8px] justify-center">
               <div>
