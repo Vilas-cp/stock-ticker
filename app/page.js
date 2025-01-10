@@ -8,56 +8,50 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const requestBodies = [
-          { market: "ind", group: 1 },
-          { market: "ind", group: 2 },
-          { market: "us", group: 1 },
-          { market: "us", group: 2 },
-        ];
-
+ 
         
-        const responses = await Promise.all(
-          requestBodies.map((body) =>
-            fetch("https://v3f43y5hpc.execute-api.ap-south-1.amazonaws.com/default/stock-api", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(body),
-            })
-          )
+        const controller = new AbortController(); 
+        const timeoutId = setTimeout(() => controller.abort(), 120000); 
+
+        const response = await fetch(
+          "https://rgcfwe8e2g.execute-api.ap-south-1.amazonaws.com/default/stock-api-v2",
+          {
+            method: "GET",
+            signal: controller.signal,
+          }
         );
 
-      
-        const data = await Promise.all(responses.map((res) => res.json()));
+        clearTimeout(timeoutId);
 
-   
-        const combinedStocks = data.flatMap((item) =>
-          item.filter(
-            (stock) =>
-              stock &&
-              stock.symbol &&
-              stock.curPrice !== null &&
-              stock.currency &&
-              stock.percent !== null &&
-              stock.direction
-          )
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        const filteredStocks = data.filter(
+          (stock) =>
+            stock &&
+            stock.symbol &&
+            stock.curPrice !== null &&
+            stock.currency &&
+            stock.percent !== null &&
+            stock.direction
         );
+        
+     
+        
 
-       
-        localStorage.setItem("stocks", JSON.stringify(combinedStocks));
-
-        setStocks(combinedStocks);
+        localStorage.setItem("stocks", JSON.stringify(filteredStocks));
+        setStocks(filteredStocks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching stock data:", error);
         setError(error.message);
 
-   
         const localData = localStorage.getItem("stocks");
         if (localData) {
           setStocks(JSON.parse(localData));
@@ -67,25 +61,24 @@ export default function Home() {
       }
     };
 
-  
     const initialData = localStorage.getItem("stocks");
     if (initialData) {
       setStocks(JSON.parse(initialData));
+      console.log(JSON.parse(initialData));
+      
       setLoading(false);
     }
 
-    
     fetchStockData();
 
-    const intervalId = setInterval(fetchStockData, 240000);
+    const intervalId = setInterval(fetchStockData, 600000); 
 
     return () => clearInterval(intervalId);
   }, []);
 
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen w-screen">
         <h1 className="text-sm text-white">Loading...</h1>
       </div>
     );
@@ -100,80 +93,65 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[100px] w-[2164px] overflow-hidden text-[25px] mt-[-5px]">
+    <div className="relative bg-black h-[100px] w-[2164px]  text-[34px] overflow-hidden font-bold  mt-[-5px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div
             key={index}
-            className="flex justify-between items-center w-full max-w-[300px] mx-7"
+            className={`flex  items-center justify-center  gap-5 mx-7 ${
+              stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
+            }`}
           >
-            <div
-              className={`flex flex-col items-center ${
-                stock.direction === "up" ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percent}</span>
+            <div className="flex items-center flex-col space-y-[-10px]">
+              <div className="">{stock.symbol}</div>
+              <div>{stock.percent}</div>
             </div>
-            <div
-              className={`flex flex-col items-center ${
-                stock.direction === "up" ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="flex items-center">
-                {stock.direction === "up" ? (
+            <div className="flex items-center flex-col space-y-[-10px]  justify-center">
+              <div>
+                <span >{stock.direction === "up" ? (
                   <ArrowDropUpIcon />
                 ) : (
                   <ArrowDropDownIcon />
-                )}
-                {stock.curPrice !== null
-                  ? `${stock.currency}${stock.curPrice}`
-                  : "Price Unavailable"}
-              </span>
-              <span className="font-bold">
-                {stock.diff > 0 ? "+" : ""}
-                {stock.currency}
+                )}</span>
+                <span>{stock.currency}</span>
+                {stock.curPrice}
+              </div>
+              <div>
+                <span>{stock.currency}</span>
                 {stock.diff}
-              </span>
+              </div>
             </div>
           </div>
         ))}
-        {stocks.map((stock, index) => (
+         {stocks.map((stock, index) => (
           <div
             key={index}
-            className="flex justify-between items-center w-full max-w-[300px] mx-7"
+            className={`flex  items-center justify-center  gap-5 mx-7 ${
+              stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
+            }`}
           >
-            <div
-              className={`flex flex-col items-center ${
-                stock.direction === "up" ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="font-bold">{stock.symbol}</span>
-              <span className="font-bold">{stock.percent}</span>
+            <div className="flex items-center flex-col space-y-[-10px]">
+              <div className="">{stock.symbol}</div>
+              <div>{stock.percent}</div>
             </div>
-            <div
-              className={`flex flex-col items-center ${
-                stock.direction === "up" ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              <span className="flex items-center">
-                {stock.direction === "up" ? (
+            <div className="flex items-center flex-col space-y-[-10px]  justify-center">
+              <div>
+                <span >{stock.direction === "up" ? (
                   <ArrowDropUpIcon />
                 ) : (
                   <ArrowDropDownIcon />
-                )}
-                {stock.curPrice !== null
-                  ? `${stock.currency}${stock.curPrice}`
-                  : "Price Unavailable"}
-              </span>
-              <span className="font-bold">
-                {stock.diff > 0 ? "+" : ""}
-                {stock.currency}
+                )}</span>
+                <span>{stock.currency}</span>
+                {stock.curPrice}
+              </div>
+              <div>
+                <span>{stock.currency}</span>
                 {stock.diff}
-              </span>
+              </div>
             </div>
           </div>
         ))}
+       
       </div>
     </div>
   );
