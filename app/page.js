@@ -11,10 +11,8 @@ export default function Home() {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
- 
-        
-        const controller = new AbortController(); 
-        const timeoutId = setTimeout(() => controller.abort(), 120000); 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
 
         const response = await fetch(
           "https://rgcfwe8e2g.execute-api.ap-south-1.amazonaws.com/default/stock-api-v2",
@@ -26,12 +24,9 @@ export default function Home() {
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
         const data = await response.json();
-
         const filteredStocks = data.filter(
           (stock) =>
             stock &&
@@ -41,9 +36,6 @@ export default function Home() {
             stock.percent !== null &&
             stock.direction
         );
-        
-     
-        
 
         localStorage.setItem("stocks", JSON.stringify(filteredStocks));
         setStocks(filteredStocks);
@@ -53,9 +45,7 @@ export default function Home() {
         setError(error.message);
 
         const localData = localStorage.getItem("stocks");
-        if (localData) {
-          setStocks(JSON.parse(localData));
-        }
+        if (localData) setStocks(JSON.parse(localData));
 
         setLoading(false);
       }
@@ -64,14 +54,11 @@ export default function Home() {
     const initialData = localStorage.getItem("stocks");
     if (initialData) {
       setStocks(JSON.parse(initialData));
-      console.log(JSON.parse(initialData));
-      
       setLoading(false);
     }
 
     fetchStockData();
-
-    const intervalId = setInterval(fetchStockData, 600000); 
+    const intervalId = setInterval(fetchStockData, 300000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -93,26 +80,28 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[100px] w-[2164px]  text-[34px] overflow-hidden font-bold  mt-[-5px]">
+    <div className="relative bg-black h-[100px] w-[2164px]  text-[35px] overflow-hidden font-bold -mt-[8px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div
             key={index}
-            className={`flex  items-center justify-center  gap-5 mx-7 ${
+            className={`flex items-center justify-center gap-5 mx-7 ${
               stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
             }`}
           >
-            <div className="flex items-center flex-col space-y-[-10px]">
-              <div className="">{stock.symbol}</div>
-              <div>{stock.percent}</div>
+            <div className="flex items-center flex-col -space-y-[8px]">
+              <div>{stock.symbol}</div>
+              <div>{stock.percent}%</div>
             </div>
-            <div className="flex items-center flex-col space-y-[-10px]  justify-center">
+            <div className="flex items-center flex-col -space-y-[8px] justify-center">
               <div>
-                <span >{stock.direction === "up" ? (
-                  <ArrowDropUpIcon />
-                ) : (
-                  <ArrowDropDownIcon />
-                )}</span>
+                <span>
+                  {stock.direction === "up" ? (
+                    <ArrowDropUpIcon />
+                  ) : (
+                    <ArrowDropDownIcon />
+                  )}
+                </span>
                 <span>{stock.currency}</span>
                 {stock.curPrice}
               </div>
@@ -122,25 +111,26 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ))}
-         {stocks.map((stock, index) => (
+        ))}{stocks.map((stock, index) => (
           <div
             key={index}
-            className={`flex  items-center justify-center  gap-5 mx-7 ${
+            className={`flex items-center justify-center gap-5 mx-7 ${
               stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
             }`}
           >
-            <div className="flex items-center flex-col space-y-[-10px]">
-              <div className="">{stock.symbol}</div>
-              <div>{stock.percent}</div>
+            <div className="flex items-center flex-col -space-y-[8px]">
+              <div>{stock.symbol}</div>
+              <div>{stock.percent}%</div>
             </div>
-            <div className="flex items-center flex-col space-y-[-10px]  justify-center">
+            <div className="flex items-center flex-col -space-y-[8px] justify-center">
               <div>
-                <span >{stock.direction === "up" ? (
-                  <ArrowDropUpIcon />
-                ) : (
-                  <ArrowDropDownIcon />
-                )}</span>
+                <span>
+                  {stock.direction === "up" ? (
+                    <ArrowDropUpIcon />
+                  ) : (
+                    <ArrowDropDownIcon />
+                  )}
+                </span>
                 <span>{stock.currency}</span>
                 {stock.curPrice}
               </div>
@@ -151,7 +141,6 @@ export default function Home() {
             </div>
           </div>
         ))}
-       
       </div>
     </div>
   );
