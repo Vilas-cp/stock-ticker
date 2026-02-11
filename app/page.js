@@ -28,15 +28,15 @@ export default function Home() {
   useEffect(() => {
     const fetchStockData = async () => {
       // Check if we're within market hours
-      if (!isMarketHours()) {
-        console.log("Outside market hours, using localStorage data");
-        const localData = localStorage.getItem("stocks");
-        if (localData) {
-          setStocks(JSON.parse(localData));
-        }
-        setLoading(false);
-        return;
-      }
+      // if (!isMarketHours()) {
+      //   console.log("Outside market hours, using localStorage data");
+      //   const localData = localStorage.getItem("stocks");
+      //   if (localData) {
+      //     setStocks(JSON.parse(localData));
+      //   }
+      //   setLoading(false);
+      //   return;
+      // }
 
       try {
         const controller = new AbortController();
