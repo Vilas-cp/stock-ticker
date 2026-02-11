@@ -8,8 +8,36 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Function to check if current time is within Indian market hours (9 AM - 4 PM IST)
+  const isMarketHours = () => {
+    const now = new Date();
+    const indianTime = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+    const hours = indianTime.getHours();
+    const minutes = indianTime.getMinutes();
+    
+    // Market hours: 9:00 AM to 4:00 PM (16:00)
+    const currentTimeInMinutes = hours * 60 + minutes;
+    const marketOpenTime = 9 * 60; // 9:00 AM
+    const marketCloseTime = 16 * 60; // 4:00 PM
+    
+    return currentTimeInMinutes >= marketOpenTime && currentTimeInMinutes < marketCloseTime;
+  };
+
   useEffect(() => {
     const fetchStockData = async () => {
+      // Check if we're within market hours
+      if (!isMarketHours()) {
+        console.log("Outside market hours, using localStorage data");
+        const localData = localStorage.getItem("stocks");
+        if (localData) {
+          setStocks(JSON.parse(localData));
+        }
+        setLoading(false);
+        return;
+      }
+
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
@@ -51,14 +79,20 @@ export default function Home() {
       }
     };
 
+   
     const initialData = localStorage.getItem("stocks");
     if (initialData) {
       setStocks(JSON.parse(initialData));
       setLoading(false);
     }
 
+   
     fetchStockData();
-    const intervalId = setInterval(fetchStockData, 300000);
+
+   
+    const intervalId = setInterval(() => {
+      fetchStockData();
+    }, 300000); 
 
     return () => clearInterval(intervalId);
   }, []);
@@ -80,11 +114,11 @@ export default function Home() {
   }
 
   return (
-    <div className="relative bg-black h-[100px] w-[2164px]  text-[35px] overflow-hidden font-bold -mt-[8px]">
+    <div className="relative bg-black h-[100px] w-[2164px] text-[35px] overflow-hidden font-bold -mt-[8px]">
       <div className="absolute top-0 left-0 flex animate-marquee">
         {stocks.map((stock, index) => (
           <div
-            key={index}
+            key={`first-${index}`}
             className={`flex items-center justify-center gap-5 mx-7 ${
               stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
             }`}
@@ -111,9 +145,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ))}{stocks.map((stock, index) => (
+        ))}
+        {stocks.map((stock, index) => (
           <div
-            key={index}
+            key={`second-${index}`}
             className={`flex items-center justify-center gap-5 mx-7 ${
               stock.direction === "up" ? "text-[#00FF00]" : "text-[#FF0000]"
             }`}
